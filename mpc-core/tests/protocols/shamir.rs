@@ -611,7 +611,14 @@ mod curve_share {
     use ark_ff::UniformRand;
     use itertools::{izip, Itertools};
     use mpc_core::{
-        protocols::shamir::{self, ShamirProtocol},
+        gadgets::poseidon2::{
+            bn254_t2::POSEIDON2_BN254_T2_PARAMS, Poseidon2T2D5, Poseidon2T2D5Params,
+        },
+        protocols::shamir::{
+            self,
+            fieldshare::{ShamirPrimeFieldShare, ShamirPrimeFieldShareVec},
+            ShamirProtocol,
+        },
         traits::EcMpcProtocol,
     };
     use rand::thread_rng;
@@ -795,5 +802,71 @@ mod curve_share {
     async fn shamir_scalar_mul_public_scalar() {
         shamir_scalar_mul_public_scalar_inner(3, 1).await;
         shamir_scalar_mul_public_scalar_inner(10, 4).await;
+    }
+
+    async fn shamir_poseidon2_gadget_kat1(num_parties: usize, threshold: usize) {
+        let test_network = ShamirTestNetwork::new(num_parties);
+        let mut rng = thread_rng();
+        let input = [ark_bn254::Fr::from(0), ark_bn254::Fr::from(1)];
+
+        let input_shares =
+            shamir::utils::share_field_elements(&input, threshold, num_parties, &mut rng);
+
+        let expected = [
+            Poseidon2T2D5Params::field_from_hex_string(
+                "0x1d01e56f49579cec72319e145f06f6177f6c5253206e78c2689781452a31878b",
+            )
+            .unwrap(),
+            Poseidon2T2D5Params::field_from_hex_string(
+                "0x0d189ec589c41b8cffa88cfc523618a055abe8192c70f75aa72fc514560f6c61",
+            )
+            .unwrap(),
+        ];
+
+        let mut tx = Vec::with_capacity(num_parties);
+        let mut rx = Vec::with_capacity(num_parties);
+        for _ in 0..num_parties {
+            let (t, r) = oneshot::channel();
+            tx.push(t);
+            rx.push(r);
+        }
+
+        for (net, tx, input) in izip!(test_network.get_party_networks(), tx, input_shares) {
+            thread::spawn(move || {
+                let mut shamir = ShamirProtocol::new(threshold, net).unwrap();
+
+                let input_ = input.get_inner();
+                let input = ShamirPrimeFieldShare::convert_slice_rev(&input_);
+
+                let poseidon2 = Poseidon2T2D5::new(&POSEIDON2_BN254_T2_PARAMS);
+                let res = poseidon2
+                    .shamir_permutation(input.try_into().unwrap(), &mut shamir)
+                    .unwrap();
+
+                let res =
+                    ShamirPrimeFieldShareVec::new(ShamirPrimeFieldShare::convert_vec(res.to_vec()));
+                tx.send(res)
+            });
+        }
+
+        let mut results = Vec::with_capacity(num_parties);
+        for r in rx {
+            results.push(r.await.unwrap());
+        }
+
+        let is_result = shamir::utils::combine_field_elements(
+            &results,
+            &(1..=num_parties).collect_vec(),
+            threshold,
+        )
+        .unwrap();
+
+        assert_eq!(is_result, expected);
+    }
+
+    #[tokio::test]
+    async fn shamir_poseidon2_gadget_kat1_test() {
+        shamir_poseidon2_gadget_kat1(3, 1).await;
+        shamir_poseidon2_gadget_kat1(10, 4).await;
     }
 }

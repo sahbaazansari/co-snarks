@@ -1,12 +1,8 @@
-use super::{Poseidon2T2D5, Poseidon2T2D5Params};
+use super::Poseidon2T2D5;
 use ark_ff::PrimeField;
 
 impl<F: PrimeField> Poseidon2T2D5<F> {
-    pub fn new(params: &'static Poseidon2T2D5Params<F>) -> Self {
-        Self { params }
-    }
-
-    fn matmul_external_plain(input: &mut [F; 2]) {
+    pub(crate) fn matmul_external_plain(input: &mut [F; 2]) {
         // Matrix circ(2, 1)
         let sum = input[0] + input[1];
 
@@ -14,7 +10,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         input[1] += sum;
     }
 
-    fn matmul_internal_plain(input: &mut [F; 2]) {
+    pub(crate) fn matmul_internal_plain(input: &mut [F; 2]) {
         // TODO poseidon 2 uses [[1, 2], [3, 1]], even though circ(2, 1) should be secure
         // Self::matmul_external(input, driver);
 
@@ -22,10 +18,10 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         let sum = input[0] + input[1];
 
         input[0] += sum;
-        input[1] += sum + input[1];
+        input[1] = sum + input[1] + input[1];
     }
 
-    fn add_rc_external_plain(&self, input: &mut [F; 2], rc_offset: usize) {
+    pub(crate) fn add_rc_external_plain(&self, input: &mut [F; 2], rc_offset: usize) {
         for (s, rc) in input
             .iter_mut()
             .zip(self.params.round_constants_external[rc_offset].iter())
@@ -34,7 +30,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         }
     }
 
-    fn add_rc_internal_plain(&self, input: &mut [F; 2], rc_offset: usize) {
+    pub(crate) fn add_rc_internal_plain(&self, input: &mut [F; 2], rc_offset: usize) {
         input[0] += &self.params.round_constants_internal[rc_offset];
     }
 
@@ -48,7 +44,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         *input *= input4;
     }
 
-    pub fn permutation_in_place(&self, state: &mut [F; 2]) {
+    pub fn plain_permutation_in_place(&self, state: &mut [F; 2]) {
         // Linear layer at beginning
         Self::matmul_external_plain(state);
 
@@ -76,9 +72,9 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         }
     }
 
-    pub fn permutation(&self, state: &[F; 2]) -> [F; 2] {
+    pub fn plain_permutation(&self, state: &[F; 2]) -> [F; 2] {
         let mut state = state.to_owned();
-        self.permutation_in_place(&mut state);
+        self.plain_permutation_in_place(&mut state);
         state
     }
 }
@@ -86,7 +82,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
 #[cfg(test)]
 mod poseidon2_gadget_plain {
     use super::*;
-    use crate::gadgets::poseidon2::bn254_t2::POSEIDON2_BN254_T2_PARAMS;
+    use crate::gadgets::poseidon2::{bn254_t2::POSEIDON2_BN254_T2_PARAMS, Poseidon2T2D5Params};
     use ark_ff::PrimeField;
     use rand::thread_rng;
 
@@ -98,7 +94,7 @@ mod poseidon2_gadget_plain {
         expected: &[F; 2],
     ) {
         let poseidon2 = Poseidon2T2D5::new(params);
-        let result = poseidon2.permutation(input);
+        let result = poseidon2.plain_permutation(input);
         assert_eq!(&result, expected);
     }
 
@@ -109,9 +105,9 @@ mod poseidon2_gadget_plain {
         input2.rotate_right(1);
 
         let poseidon2 = Poseidon2T2D5::new(params);
-        let perm1 = poseidon2.permutation(input1.as_slice().try_into().unwrap());
-        let perm2 = poseidon2.permutation(&input1.try_into().unwrap());
-        let perm3 = poseidon2.permutation(&input2.try_into().unwrap());
+        let perm1 = poseidon2.plain_permutation(input1.as_slice().try_into().unwrap());
+        let perm2 = poseidon2.plain_permutation(&input1.try_into().unwrap());
+        let perm3 = poseidon2.plain_permutation(&input2.try_into().unwrap());
 
         assert_eq!(perm1, perm2);
         assert_ne!(perm1, perm3);

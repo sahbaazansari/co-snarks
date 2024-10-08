@@ -1,5 +1,6 @@
 pub mod bn254_t2;
 pub mod plain;
+pub mod shamir;
 
 use ark_ff::PrimeField;
 use eyre::Error;
@@ -36,7 +37,7 @@ impl<F: PrimeField> Poseidon2T2D5Params<F> {
         }
     }
 
-    pub(crate) fn field_from_hex_string(str: &str) -> Result<F, Error> {
+    pub fn field_from_hex_string(str: &str) -> Result<F, Error> {
         let tmp = match str.strip_prefix("0x") {
             Some(t) => BigUint::from_str_radix(t, 16),
             None => BigUint::from_str_radix(str, 16),
@@ -48,4 +49,10 @@ impl<F: PrimeField> Poseidon2T2D5Params<F> {
 
 pub struct Poseidon2T2D5<F: PrimeField> {
     pub(crate) params: &'static Poseidon2T2D5Params<F>,
+}
+
+impl<F: PrimeField> Poseidon2T2D5<F> {
+    pub fn new(params: &'static Poseidon2T2D5Params<F>) -> Self {
+        Self { params }
+    }
 }
