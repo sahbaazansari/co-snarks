@@ -15,7 +15,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         unsafe { &mut *(state.as_mut() as *mut [ShamirPrimeFieldShare<F>] as *mut [F; T]) }
     }
 
-    fn precompute<N: ShamirNetwork>(
+    fn precompute_shamir<N: ShamirNetwork>(
         &self,
         driver: &mut ShamirProtocol<F, N>,
     ) -> std::io::Result<Precomputations<F>> {
@@ -151,7 +151,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         state: &mut [ShamirPrimeFieldShare<F>; 2],
         driver: &mut ShamirProtocol<F, N>,
     ) -> std::io::Result<()> {
-        let mut precomp = self.precompute(driver)?;
+        let mut precomp = self.precompute_shamir(driver)?;
 
         let state = Self::convert_shamir_mut(state);
 
