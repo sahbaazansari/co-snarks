@@ -11,10 +11,10 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
     }
 
     pub(crate) fn matmul_internal_plain(input: &mut [F; 2]) {
-        // TODO poseidon 2 uses [[1, 2], [3, 1]], even though circ(2, 1) should be secure
+        // TODO poseidon 2 uses [[2, 1], [1, 3]], even though circ(2, 1) should be secure
         // Self::matmul_external(input, driver);
 
-        // Matrix [[1, 2], [3, 1]]
+        // Matrix [[2, 1], [1, 3]]
         let sum = input[0] + input[1];
 
         input[0] += sum;
