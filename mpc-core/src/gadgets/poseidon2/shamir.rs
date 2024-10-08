@@ -5,7 +5,9 @@ use crate::protocols::shamir::{
 use ark_ff::PrimeField;
 
 impl<F: PrimeField> Poseidon2T2D5<F> {
-    fn convert_mut<const T: usize>(state: &mut [ShamirPrimeFieldShare<F>; T]) -> &mut [F; T] {
+    fn convert_shamir_mut<const T: usize>(
+        state: &mut [ShamirPrimeFieldShare<F>; T],
+    ) -> &mut [F; T] {
         // SAFETY: ShamirPrimeFieldShare has repr(transparent)
         unsafe { &mut *(state.as_mut() as *mut [ShamirPrimeFieldShare<F>] as *mut [F; T]) }
     }
@@ -56,7 +58,7 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         state: &mut [ShamirPrimeFieldShare<F>; 2],
         driver: &mut ShamirProtocol<F, N>,
     ) -> std::io::Result<()> {
-        let state = Self::convert_mut(state);
+        let state = Self::convert_shamir_mut(state);
 
         // Linear layer at beginning
         Self::matmul_external_plain(state);

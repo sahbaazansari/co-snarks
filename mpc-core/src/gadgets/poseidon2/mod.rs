@@ -1,5 +1,6 @@
 pub mod bn254_t2;
 pub mod plain;
+pub mod rep3;
 pub mod shamir;
 
 use ark_ff::PrimeField;

@@ -137,6 +137,8 @@ mod field_share {
     use ark_ff::Field;
     use ark_std::{UniformRand, Zero};
     use itertools::izip;
+    use mpc_core::gadgets::poseidon2::bn254_t2::POSEIDON2_BN254_T2_PARAMS;
+    use mpc_core::gadgets::poseidon2::{Poseidon2T2D5, Poseidon2T2D5Params};
     use mpc_core::protocols::rep3::witness_extension_impl::Rep3VmType;
     use mpc_core::protocols::rep3::Rep3PrimeFieldShare;
     use mpc_core::protocols::rep3::{self, fieldshare::Rep3PrimeFieldShareVec, Rep3Protocol};
@@ -692,6 +694,63 @@ mod field_share {
             assert_eq!(s2a, s3b);
             assert_eq!(s3a, s1b);
         }
+    }
+
+    #[tokio::test]
+    async fn rep3_poseidon2_gadget_kat1() {
+        let test_network = Rep3TestNetwork::default();
+        let mut rng = thread_rng();
+        let input = [ark_bn254::Fr::from(0), ark_bn254::Fr::from(1)];
+
+        let input_shares = rep3::utils::share_field_elements(&input, &mut rng);
+
+        let expected = [
+            Poseidon2T2D5Params::field_from_hex_string(
+                "0x1d01e56f49579cec72319e145f06f6177f6c5253206e78c2689781452a31878b",
+            )
+            .unwrap(),
+            Poseidon2T2D5Params::field_from_hex_string(
+                "0x0d189ec589c41b8cffa88cfc523618a055abe8192c70f75aa72fc514560f6c61",
+            )
+            .unwrap(),
+        ];
+
+        let mut tx = Vec::with_capacity(3);
+        let mut rx = Vec::with_capacity(3);
+        for _ in 0..3 {
+            let (t, r) = oneshot::channel();
+            tx.push(t);
+            rx.push(r);
+        }
+
+        for (net, tx, input) in izip!(test_network.get_party_networks(), tx, input_shares) {
+            thread::spawn(move || {
+                let mut rep3 = Rep3Protocol::new(net).unwrap();
+
+                let input = input.into_iter().collect::<Vec<_>>();
+
+                let poseidon2 = Poseidon2T2D5::new(&POSEIDON2_BN254_T2_PARAMS);
+                let res = poseidon2
+                    .rep3_permutation(&input.try_into().unwrap(), &mut rep3)
+                    .unwrap();
+
+                let res = Rep3PrimeFieldShareVec::from(res.to_vec());
+                tx.send(res)
+            });
+        }
+
+        let mut results = Vec::with_capacity(3);
+        for r in rx {
+            results.push(r.await.unwrap());
+        }
+
+        let is_result = rep3::utils::combine_field_elements(
+            results[0].to_owned(),
+            results[1].to_owned(),
+            results[2].to_owned(),
+        );
+
+        assert_eq!(is_result, expected);
     }
 }
 
