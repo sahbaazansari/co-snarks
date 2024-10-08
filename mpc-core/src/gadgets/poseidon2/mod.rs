@@ -57,3 +57,23 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         Self { params }
     }
 }
+
+pub(crate) struct Precomputations<F: PrimeField> {
+    pub(crate) r: Vec<F>,
+    pub(crate) r2: Vec<F>,
+    pub(crate) r3: Vec<F>,
+    pub(crate) r4: Vec<F>,
+    pub(crate) r5: Vec<F>,
+    pub(crate) offset: usize,
+}
+
+impl<F: PrimeField> Precomputations<F> {
+    pub(crate) fn get(&self, offset: usize) -> (&F, &F, &F, &F, &F) {
+        let r = &self.r[offset];
+        let r2 = &self.r2[offset];
+        let r3 = &self.r3[offset];
+        let r4 = &self.r4[offset];
+        let r5 = &self.r5[offset];
+        (r, r2, r3, r4, r5)
+    }
+}
