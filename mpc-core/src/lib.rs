@@ -4,6 +4,7 @@
 
 #![warn(missing_docs)]
 
+pub mod gadgets;
 pub mod protocols;
 pub mod traits;
 
