@@ -248,7 +248,7 @@ fn share_random_input_shamir<F: PrimeField, R: Rng + CryptoRng>(
         let shares =
             shamir::utils::share_field_elements(&input, threshold, net.get_num_parties(), rng);
         let myshare = shares[0].clone();
-        for (i, val) in shares.into_iter().skip(1).enumerate() {
+        for (i, val) in shares.into_iter().enumerate().skip(1) {
             net.send_many(i, &val.get_inner())?;
         }
         myshare.get_inner()
