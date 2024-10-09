@@ -103,6 +103,11 @@ fn main() -> color_eyre::Result<ExitCode> {
     poseidon2_rep3(&config)?;
     poseidon2_rep3_with_precomp(&config)?;
 
+    let elements = [10, 100, 1000];
+    for el in elements.iter() {
+        poseidon2_rep3_with_precomp_packed(&config, *el)?;
+    }
+
     poseidon2_shamir(&config)?;
     poseidon2_shamir_with_precomp(&config)?;
 
@@ -236,6 +241,50 @@ fn poseidon2_rep3_with_precomp(config: &Config) -> color_eyre::Result<ExitCode> 
             share.as_mut_slice().try_into().unwrap(),
             &mut protocol,
         )?;
+        let duration = start.elapsed().as_micros() as f64;
+        times.push(duration);
+
+        sleep(Duration::from_millis(100));
+    }
+
+    print_runtimes(times, id, "Poseidon2 rep3 with precomp");
+
+    Ok(ExitCode::SUCCESS)
+}
+
+fn poseidon2_rep3_with_precomp_packed(
+    config: &Config,
+    num_poseidons: usize,
+) -> color_eyre::Result<ExitCode> {
+    if config.threshold != 1 {
+        return Err(color_eyre::Report::msg("Threshold must be 1 for rep3"));
+    }
+
+    let mut rng = rand::thread_rng();
+
+    let mut times = Vec::with_capacity(config.runs);
+    let mut id = 0;
+
+    for _ in 0..config.runs {
+        // connect to network
+        let mut net = Rep3MpcNet::new(config.network.to_owned())?;
+        id = usize::from(net.get_id());
+
+        let share = share_random_input_rep3::<ark_bn254::Fr, _>(&mut net, &mut rng)?;
+        let share = [share[0].to_owned(), share[0].to_owned()];
+        let mut shares = Vec::with_capacity(num_poseidons);
+        for _ in 0..num_poseidons {
+            shares.push(share.clone());
+        }
+
+        // init MPC protocol
+        let mut protocol = Rep3Protocol::new(net)?;
+
+        let poseidon2 = Poseidon2T2D5::new(&POSEIDON2_BN254_T2_PARAMS);
+
+        let start = Instant::now();
+        poseidon2
+            .rep3_permutation_in_place_with_precomputation_packed(&mut shares, &mut protocol)?;
         let duration = start.elapsed().as_micros() as f64;
         times.push(duration);
 
