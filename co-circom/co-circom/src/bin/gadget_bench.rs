@@ -291,7 +291,8 @@ fn poseidon2_rep3_with_precomp_packed(
         sleep(Duration::from_millis(100));
     }
 
-    print_runtimes(times, id, "Poseidon2 rep3 with precomp");
+    let string = format!("Poseidon2 rep3 with precomp packed {}", num_poseidons);
+    print_runtimes(times, id, &string);
 
     Ok(ExitCode::SUCCESS)
 }
