@@ -109,10 +109,13 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         input: &mut [F; 2],
         driver: &mut ShamirProtocol<F, N>,
     ) -> std::io::Result<()> {
+        tracing::info!("sbox_shamir");
         // Square
         let mut sq = driver
             .degree_reduce_vec(vec![input[0].square(), input[1].square()])?
             .a;
+
+        tracing::info!("sbox_shamir2");
 
         // Quad
         sq.iter_mut().for_each(|x| {
@@ -120,9 +123,13 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         });
         let mut qu = driver.degree_reduce_vec(sq)?.a;
 
+        tracing::info!("sbox_shamir3");
+
         // Quint
         qu.iter_mut().zip(input.iter()).for_each(|(x, y)| *x *= y);
         let res = driver.degree_reduce_vec(qu)?.a;
+
+        tracing::info!("sbox_shamir4");
 
         input.clone_from_slice(&res);
         Ok(())
