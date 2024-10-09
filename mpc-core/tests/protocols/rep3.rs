@@ -809,6 +809,71 @@ mod field_share {
 
         assert_eq!(is_result, expected);
     }
+
+    #[tokio::test]
+    async fn rep3_poseidon2_gadget_kat1_precomp_packed() {
+        let test_network = Rep3TestNetwork::default();
+        let mut rng = thread_rng();
+        let input = [ark_bn254::Fr::from(0), ark_bn254::Fr::from(1)];
+
+        let input_shares = rep3::utils::share_field_elements(&input, &mut rng);
+
+        let expected = [
+            Poseidon2T2D5Params::field_from_hex_string(
+                "0x1d01e56f49579cec72319e145f06f6177f6c5253206e78c2689781452a31878b",
+            )
+            .unwrap(),
+            Poseidon2T2D5Params::field_from_hex_string(
+                "0x0d189ec589c41b8cffa88cfc523618a055abe8192c70f75aa72fc514560f6c61",
+            )
+            .unwrap(),
+        ];
+
+        let mut tx = Vec::with_capacity(3);
+        let mut rx = Vec::with_capacity(3);
+        for _ in 0..3 {
+            let (t, r) = oneshot::channel();
+            tx.push(t);
+            rx.push(r);
+        }
+
+        for (net, tx, input) in izip!(test_network.get_party_networks(), tx, input_shares) {
+            thread::spawn(move || {
+                let mut rep3 = Rep3Protocol::new(net).unwrap();
+
+                let tmp = input.into_iter().collect::<Vec<_>>();
+                let tmp = [tmp[0].to_owned(), tmp[1].to_owned()];
+                let mut input = Vec::with_capacity(3);
+                for _ in 0..3 {
+                    input.push(tmp.clone());
+                }
+
+                let poseidon2 = Poseidon2T2D5::new(&POSEIDON2_BN254_T2_PARAMS);
+                poseidon2
+                    .rep3_permutation_in_place_with_precomputation_packed(&mut input, &mut rep3)
+                    .unwrap();
+
+                let res = input.into_flattened();
+                let res = Rep3PrimeFieldShareVec::from(res.to_vec());
+                tx.send(res)
+            });
+        }
+
+        let mut results = Vec::with_capacity(3);
+        for r in rx {
+            results.push(r.await.unwrap());
+        }
+
+        let is_result = rep3::utils::combine_field_elements(
+            results[0].to_owned(),
+            results[1].to_owned(),
+            results[2].to_owned(),
+        );
+
+        for res in is_result.chunks_exact(2) {
+            assert_eq!(res, expected);
+        }
+    }
 }
 
 mod curve_share {
