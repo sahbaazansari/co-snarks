@@ -298,7 +298,7 @@ fn poseidon2_shamir(config: &Config) -> color_eyre::Result<ExitCode> {
         sleep(Duration::from_millis(100));
     }
 
-    print_runtimes(times, id, "Poseidon2 rep3");
+    print_runtimes(times, id, "Poseidon2 shamir");
 
     Ok(ExitCode::SUCCESS)
 }
@@ -333,7 +333,7 @@ fn poseidon2_shamir_with_precomp(config: &Config) -> color_eyre::Result<ExitCode
         sleep(Duration::from_millis(100));
     }
 
-    print_runtimes(times, id, "Poseidon2 rep3");
+    print_runtimes(times, id, "Poseidon2 shamir with precomp");
 
     Ok(ExitCode::SUCCESS)
 }
