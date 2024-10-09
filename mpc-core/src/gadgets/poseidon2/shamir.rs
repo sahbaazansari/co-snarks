@@ -190,6 +190,8 @@ impl<F: PrimeField> Poseidon2T2D5<F> {
         state: &mut [ShamirPrimeFieldShare<F>; 2],
         driver: &mut ShamirProtocol<F, N>,
     ) -> std::io::Result<()> {
+        tracing::info!("poseidon2_permutation_in_place");
+
         let state = Self::convert_shamir_mut(state);
 
         // Linear layer at beginning

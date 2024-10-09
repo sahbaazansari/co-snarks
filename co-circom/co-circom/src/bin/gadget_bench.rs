@@ -250,13 +250,10 @@ fn share_random_input_shamir<F: PrimeField, R: Rng + CryptoRng>(
         let myshare = shares[0].clone();
         for (i, val) in shares.into_iter().enumerate().skip(1) {
             net.send_many(i, &val.get_inner())?;
-            tracing::info!("Sent to {}", i);
         }
         myshare.get_inner()
     } else {
-        let res = net.recv_many(0)?;
-        tracing::info!("receiving as {}", net.get_id());
-        res
+        net.recv_many(0)?
     };
 
     let share = ShamirPrimeFieldShare::convert_vec_rev(share);
