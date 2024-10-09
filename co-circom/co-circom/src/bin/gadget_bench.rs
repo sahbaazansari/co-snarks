@@ -25,7 +25,12 @@ use mpc_core::{
 use mpc_net::config::NetworkConfig;
 use rand::{CryptoRng, Rng};
 use serde::{Deserialize, Serialize};
-use std::{path::PathBuf, process::ExitCode, time::Instant};
+use std::{
+    path::PathBuf,
+    process::ExitCode,
+    thread::sleep,
+    time::{Duration, Instant},
+};
 
 fn install_tracing() {
     use tracing_subscriber::prelude::*;
@@ -195,6 +200,8 @@ fn poseidon2_rep3(config: &Config) -> color_eyre::Result<ExitCode> {
             .rep3_permutation_in_place(share.as_mut_slice().try_into().unwrap(), &mut protocol)?;
         let duration = start.elapsed().as_micros() as f64;
         times.push(duration);
+
+        sleep(Duration::from_millis(100));
     }
 
     print_runtimes(times, id, "Poseidon2 rep3");
@@ -231,6 +238,8 @@ fn poseidon2_rep3_with_precomp(config: &Config) -> color_eyre::Result<ExitCode> 
         )?;
         let duration = start.elapsed().as_micros() as f64;
         times.push(duration);
+
+        sleep(Duration::from_millis(100));
     }
 
     print_runtimes(times, id, "Poseidon2 rep3 with precomp");
@@ -285,6 +294,8 @@ fn poseidon2_shamir(config: &Config) -> color_eyre::Result<ExitCode> {
             .shamir_permutation_in_place(share.as_mut_slice().try_into().unwrap(), &mut protocol)?;
         let duration = start.elapsed().as_micros() as f64;
         times.push(duration);
+
+        sleep(Duration::from_millis(100));
     }
 
     print_runtimes(times, id, "Poseidon2 rep3");
@@ -318,6 +329,8 @@ fn poseidon2_shamir_with_precomp(config: &Config) -> color_eyre::Result<ExitCode
         )?;
         let duration = start.elapsed().as_micros() as f64;
         times.push(duration);
+
+        sleep(Duration::from_millis(100));
     }
 
     print_runtimes(times, id, "Poseidon2 rep3");
