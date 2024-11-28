@@ -142,7 +142,7 @@ impl<F: PrimeField, N: Rep3Network> NoirWitnessExtensionProtocol<F> for Rep3Acvm
         Ok(Rep3BrilligDriver::with_io_context(self.io_context.fork()?))
     }
 
-    fn from_brillig_result(
+    fn convert_brillig_result(
         &mut self,
         brillig_result: Vec<Rep3BrilligType<F>>,
     ) -> eyre::Result<Vec<Self::AcvmType>> {
@@ -340,8 +340,7 @@ impl<F: PrimeField, N: Rep3Network> NoirWitnessExtensionProtocol<F> for Rep3Acvm
             }
             (Rep3AcvmType::Public(public), Rep3AcvmType::Shared(shared))
             | (Rep3AcvmType::Shared(shared), Rep3AcvmType::Public(public)) => {
-                let mul = arithmetic::mul_public(shared, public);
-                Rep3AcvmType::Shared(arithmetic::mul_public(mul, c))
+                Rep3AcvmType::Shared(arithmetic::mul_public(shared, public))
             }
             (Rep3AcvmType::Shared(lhs), Rep3AcvmType::Shared(rhs)) => {
                 let shared_mul = arithmetic::mul(lhs, rhs, &mut self.io_context)?;

@@ -10,7 +10,6 @@ use mpc_core::protocols::rep3_ring::ring::ring_impl::RingElement;
 use mpc_core::protocols::rep3_ring::{self, Rep3BitShare, Rep3RingShare};
 use num_bigint::BigUint;
 use std::marker::PhantomData;
-use std::u128;
 
 use super::PlainBrilligType as Public;
 

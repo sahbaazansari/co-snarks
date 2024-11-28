@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use std::io;
 use std::marker::PhantomData;
-use std::{collections::HashMap, usize};
 
 use ark_ff::{One, PrimeField};
 use co_brillig::mpc::{PlainBrilligDriver, PlainBrilligType};
@@ -34,7 +34,7 @@ impl<F: PrimeField> NoirWitnessExtensionProtocol<F> for PlainAcvmSolver<F> {
         Ok(PlainBrilligDriver::default())
     }
 
-    fn from_brillig_result(
+    fn convert_brillig_result(
         &mut self,
         brillig_result: Vec<PlainBrilligType<F>>,
     ) -> eyre::Result<Vec<Self::AcvmType>> {
