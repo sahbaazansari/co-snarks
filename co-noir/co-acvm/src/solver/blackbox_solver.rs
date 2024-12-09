@@ -112,7 +112,7 @@ where
         &mut self,
         bb_func: &BlackBoxFuncCall<GenericFieldElement<F>>,
     ) -> CoAcvmResult<()> {
-        tracing::trace!("solving blackbox");
+        // tracing::trace!("solving blackbox");
 
         let initial_witness = &mut self.witness_map[self.function_index];
 

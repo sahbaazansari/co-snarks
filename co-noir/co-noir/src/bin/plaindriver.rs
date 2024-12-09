@@ -210,7 +210,7 @@ fn main() -> color_eyre::Result<ExitCode> {
     out_file
         .write(vk_u8.as_slice())
         .context("while writing vk to file")?;
-    tracing::info!("Wrote vk to file {}", out_path.display());
+    // tracing::info!("Wrote vk to file {}", out_path.display());
 
     // Create the proof
     let driver = PlainUltraHonkDriver;
@@ -234,7 +234,7 @@ fn main() -> color_eyre::Result<ExitCode> {
     out_file
         .write(proof_u8.as_slice())
         .context("while writing proof to file")?;
-    tracing::info!("Wrote proof to file {}", out_path.display());
+    // tracing::info!("Wrote proof to file {}", out_path.display());
 
     // Get the verifying key
     let verifying_key = VerifyingKey::from_barrettenberg_and_crs(vk_barretenberg, verifier_crs);
@@ -248,10 +248,10 @@ fn main() -> color_eyre::Result<ExitCode> {
     };
 
     if is_valid {
-        tracing::info!("Proof verified successfully");
+        // tracing::info!("Proof verified successfully");
         Ok(ExitCode::SUCCESS)
     } else {
-        tracing::error!("Proof verification failed");
+        // tracing::error!("Proof verification failed");
         Ok(ExitCode::FAILURE)
     }
 }

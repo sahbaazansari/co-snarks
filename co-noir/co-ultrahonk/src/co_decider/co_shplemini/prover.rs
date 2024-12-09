@@ -154,7 +154,7 @@ impl<
         commitment_key: &ProverCrs<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<Vec<ShpleminiOpeningClaim<T, P>>> {
-        tracing::trace!("Gemini prove");
+        tracing::debug!("Gemini prove");
         let n = 1 << log_n;
 
         // Compute batched polynomials
@@ -218,7 +218,7 @@ impl<
         batched_unshifted: SharedPolynomial<T, P>,
         batched_to_be_shifted: SharedPolynomial<T, P>,
     ) -> Vec<SharedPolynomial<T, P>> {
-        tracing::trace!("Compute fold polynomials");
+        tracing::debug!("Compute fold polynomials");
         // Note: bb uses multithreading here
         let mut fold_polynomials: Vec<SharedPolynomial<T, P>> =
             Vec::with_capacity(num_variables + 1);
@@ -287,7 +287,7 @@ impl<
         mut fold_polynomials: Vec<SharedPolynomial<T, P>>,
         r_challenge: P::ScalarField,
     ) -> HonkProofResult<Vec<ShpleminiOpeningClaim<T, P>>> {
-        tracing::trace!("Compute fold polynomial evaluations");
+        tracing::debug!("Compute fold polynomial evaluations");
 
         let num_variables = fold_polynomials.len() - 1;
         let batched_f = &mut fold_polynomials.remove(0); // F(X) = ∑ⱼ ρʲ fⱼ(X)
@@ -366,7 +366,7 @@ impl<
         commitment_key: &ProverCrs<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<ZeroMorphOpeningClaim<T, P>> {
-        tracing::trace!("Shplonk prove");
+        tracing::debug!("Shplonk prove");
         let nu = transcript.get_challenge::<P>("Shplonk:nu".to_string());
         let batched_quotient =
             Self::compute_batched_quotient(&mut self.driver, &opening_claims, nu);
@@ -395,7 +395,7 @@ impl<
         crs: &ProverCrs<P>,
         sumcheck_output: SumcheckOutput<P::ScalarField>,
     ) -> HonkProofResult<ZeroMorphOpeningClaim<T, P>> {
-        tracing::trace!("Shplemini prove");
+        tracing::debug!("Shplemini prove");
         let log_circuit_size = Utils::get_msb32(circuit_size);
         let opening_claims = self.gemini_prove(
             sumcheck_output.challenges,
@@ -423,7 +423,7 @@ impl<
         nu_challenge: P::ScalarField,
         z_challenge: P::ScalarField,
     ) -> ZeroMorphOpeningClaim<T, P> {
-        tracing::trace!("Compute partially evaluated batched quotient");
+        tracing::debug!("Compute partially evaluated batched quotient");
         let num_opening_claims = opening_claims.len();
 
         let mut inverse_vanishing_evals: Vec<P::ScalarField> =
@@ -470,7 +470,7 @@ impl<
         opening_claims: &Vec<ShpleminiOpeningClaim<T, P>>,
         nu_challenge: P::ScalarField,
     ) -> SharedPolynomial<T, P> {
-        tracing::trace!("Compute batched quotient");
+        tracing::debug!("Compute batched quotient");
         // Find n, the maximum size of all polynomials fⱼ(X)
         let mut max_poly_size: usize = 0;
         for claim in opening_claims {

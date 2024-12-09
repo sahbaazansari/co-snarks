@@ -82,14 +82,17 @@ impl<'a, N: Rep3Network> Rep3Garbler<'a, N> {
                 panic!("Garbler should not be PartyID::ID0");
             }
             PartyID::ID1 => {
+                tracing::debug!("Sending circuit ID1");
                 // Send the prepared circuit over the network to the evaluator
                 let mut empty_circuit = Vec::new();
                 std::mem::swap(&mut empty_circuit, &mut self.circuit);
                 self.io_context
                     .network
                     .send_many(PartyID::ID0, &empty_circuit)?;
+                tracing::debug!("Sending circuit ID1 done");
             }
             PartyID::ID2 => {
+                tracing::debug!("Sending circuit ID2");
                 // Send the hash of the circuit to the evaluator
                 let mut hash = Sha3_256::default();
                 std::mem::swap(&mut hash, &mut self.hash);
@@ -97,6 +100,7 @@ impl<'a, N: Rep3Network> Rep3Garbler<'a, N> {
                 self.io_context
                     .network
                     .send(PartyID::ID0, digest.as_slice())?;
+                tracing::debug!("Sending circuit ID2 done");
             }
         }
         Ok(())

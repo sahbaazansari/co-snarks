@@ -374,7 +374,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         crs: &ProverCrs<P>,
         sumcheck_output: SumcheckOutput<P::ScalarField>,
     ) -> HonkProofResult<ShpleminiOpeningClaim<P::ScalarField>> {
-        tracing::trace!("Zeromorph prove");
+        // tracing::trace!("Zeromorph prove");
 
         let multilinear_challenge = &sumcheck_output.challenges;
         let commitment_key = crs;

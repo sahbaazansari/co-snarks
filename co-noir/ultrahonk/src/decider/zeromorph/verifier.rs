@@ -19,7 +19,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         circuit_size: u32,
         multivariate_challenge: Vec<P::ScalarField>,
     ) -> HonkVerifyResult<ZeroMorphVerifierOpeningClaim<P>> {
-        tracing::trace!("Zeromorph verify");
+        // tracing::trace!("Zeromorph verify");
 
         let unshifted_evaluations: PolyF<P::ScalarField> =
             Self::get_f_evaluations(&self.memory.claimed_evaluations);

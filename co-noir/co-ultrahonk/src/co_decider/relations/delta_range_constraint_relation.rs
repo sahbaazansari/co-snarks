@@ -121,7 +121,7 @@ impl<T: NoirUltraHonkProver<P>, P: HonkCurve<TranscriptFieldType>> Relation<T, P
         _relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate DeltaRangeConstraintRelation");
+        tracing::debug!("Accumulate DeltaRangeConstraintRelation");
 
         let w_1 = input.witness.w_l();
         let w_2 = input.witness.w_r();

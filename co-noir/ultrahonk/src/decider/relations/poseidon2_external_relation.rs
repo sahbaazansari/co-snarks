@@ -124,7 +124,7 @@ impl<F: PrimeField> Relation<F> for Poseidon2ExternalRelation {
         _relation_parameters: &RelationParameters<F>,
         scaling_factor: &F,
     ) {
-        tracing::trace!("Accumulate Poseidon2ExternalRelation");
+        // tracing::trace!("Accumulate Poseidon2ExternalRelation");
 
         let w_l = input.witness.w_l();
         let w_r = input.witness.w_r();
@@ -210,7 +210,7 @@ impl<F: PrimeField> Relation<F> for Poseidon2ExternalRelation {
         _relation_parameters: &RelationParameters<F>,
         scaling_factor: &F,
     ) {
-        tracing::trace!("Accumulate Poseidon2ExternalRelation");
+        // tracing::trace!("Accumulate Poseidon2ExternalRelation");
 
         let w_l = input.witness.w_l();
         let w_r = input.witness.w_r();

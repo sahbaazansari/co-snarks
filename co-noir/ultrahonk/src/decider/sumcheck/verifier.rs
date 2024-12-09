@@ -22,7 +22,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         circuit_size: u32,
     ) -> HonkVerifyResult<SumcheckVerifierOutput<P::ScalarField>> {
-        tracing::trace!("Sumcheck verify");
+        // tracing::trace!("Sumcheck verify");
 
         let mut verified: bool = true;
 
@@ -42,7 +42,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         let mut multivariate_challenge = Vec::with_capacity(multivariate_d as usize);
 
         for round_idx in 0..CONST_PROOF_SIZE_LOG_N {
-            tracing::trace!("Sumcheck verify round {}", round_idx);
+            // tracing::trace!("Sumcheck verify round {}", round_idx);
             let round_univariate_label = format!("Sumcheck:univariate_{}", round_idx);
 
             let evaluations = transcript

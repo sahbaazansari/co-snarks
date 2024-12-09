@@ -94,7 +94,7 @@ impl<T: NoirUltraHonkProver<P>, P: HonkCurve<TranscriptFieldType>> Relation<T, P
         _relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate EllipticRelation");
+        tracing::debug!("Accumulate EllipticRelation");
 
         // AZTEC TODO(@zac - williamson #2608 when Pedersen refactor is completed,
         // replace old addition relations with these ones and

@@ -15,7 +15,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         honk_proof: HonkProof<TranscriptFieldType>,
         verifying_key: VerifyingKey<P>,
     ) -> HonkVerifyResult<bool> {
-        tracing::trace!("UltraHonk verification");
+        // tracing::trace!("UltraHonk verification");
 
         let mut transcript = Transcript::<TranscriptFieldType, H>::new_verifier(honk_proof);
 

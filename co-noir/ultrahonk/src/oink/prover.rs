@@ -53,7 +53,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     }
 
     fn compute_w4(&mut self, proving_key: &ProvingKey<P>) {
-        tracing::trace!("compute w4");
+        // tracing::trace!("compute w4");
         // The memory record values are computed at the indicated indices as
         // w4 = w3 * eta^3 + w2 * eta^2 + w1 * eta + read_write_flag;
 
@@ -94,7 +94,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     }
 
     fn compute_read_term(&self, proving_key: &ProvingKey<P>, i: usize) -> P::ScalarField {
-        tracing::trace!("compute read term");
+        // tracing::trace!("compute read term");
 
         let gamma = &self.memory.challenges.gamma;
         let eta_1 = &self.memory.challenges.eta_1;
@@ -128,7 +128,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
 
     /// Compute table_1 + gamma + table_2 * eta + table_3 * eta_2 + table_4 * eta_3
     fn compute_write_term(&self, proving_key: &ProvingKey<P>, i: usize) -> P::ScalarField {
-        tracing::trace!("compute write term");
+        // tracing::trace!("compute write term");
 
         let gamma = &self.memory.challenges.gamma;
         let eta_1 = &self.memory.challenges.eta_1;
@@ -143,7 +143,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     }
 
     fn compute_logderivative_inverses(&mut self, proving_key: &ProvingKey<P>) {
-        tracing::trace!("compute logderivative inverse");
+        // tracing::trace!("compute logderivative inverse");
 
         debug_assert_eq!(
             proving_key.polynomials.precomputed.q_lookup().len(),
@@ -190,7 +190,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         circuit_size: u32,
         pub_inputs_offset: u32,
     ) -> P::ScalarField {
-        tracing::trace!("compute public input delta");
+        // tracing::trace!("compute public input delta");
 
         // Let m be the number of public inputs x₀,…, xₘ₋₁.
         // Recall that we broke the permutation σ⁰ by changing the mapping
@@ -235,7 +235,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         proving_key: &ProvingKey<P>,
         i: usize,
     ) -> P::ScalarField {
-        tracing::trace!("compute grand product numerator");
+        // tracing::trace!("compute grand product numerator");
 
         let w_1 = &proving_key.polynomials.witness.w_l()[i];
         let w_2 = &proving_key.polynomials.witness.w_r()[i];
@@ -256,7 +256,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     }
 
     fn grand_product_denominator(&self, proving_key: &ProvingKey<P>, i: usize) -> P::ScalarField {
-        tracing::trace!("compute grand product denominator");
+        // tracing::trace!("compute grand product denominator");
 
         let w_1 = &proving_key.polynomials.witness.w_l()[i];
         let w_2 = &proving_key.polynomials.witness.w_r()[i];
@@ -277,7 +277,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     }
 
     fn compute_grand_product(&mut self, proving_key: &ProvingKey<P>) {
-        tracing::trace!("compute grand product");
+        // tracing::trace!("compute grand product");
 
         // Barratenberg uses multithreading here
 
@@ -329,7 +329,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         alphas: &mut [P::ScalarField; NUM_ALPHAS],
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) {
-        tracing::trace!("generate alpha round");
+        // tracing::trace!("generate alpha round");
 
         let args: [String; NUM_ALPHAS] = array::from_fn(|i| format!("alpha_{}", i));
         alphas.copy_from_slice(&transcript.get_challenges::<P>(&args));
@@ -340,7 +340,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing preamble round");
+        // tracing::trace!("executing preamble round");
 
         transcript
             .send_u64_to_verifier("circuit_size".to_string(), proving_key.circuit_size as u64);
@@ -372,7 +372,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing wire commitments round");
+        // tracing::trace!("executing wire commitments round");
 
         // Commit to the first three wire polynomials of the instance
         // We only commit to the fourth wire polynomial after adding memory records
@@ -404,7 +404,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing sorted list accumulator round");
+        // tracing::trace!("executing sorted list accumulator round");
 
         let challs = transcript.get_challenges::<P>(&[
             "eta".to_string(),
@@ -448,7 +448,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing log derivative inverse round");
+        // tracing::trace!("executing log derivative inverse round");
 
         let challs = transcript.get_challenges::<P>(&["beta".to_string(), "gamma".to_string()]);
         self.memory.challenges.beta = challs[0];
@@ -472,7 +472,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing grand product computation round");
+        // tracing::trace!("executing grand product computation round");
 
         self.memory.public_input_delta = Self::compute_public_input_delta(
             &self.memory.challenges.beta,
@@ -494,7 +494,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         proving_key: &ProvingKey<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<ProverMemory<P>> {
-        tracing::trace!("Oink prove");
+        // tracing::trace!("Oink prove");
 
         // Add circuit size public input size and public inputs to transcript
         Self::execute_preamble_round(transcript, proving_key)?;

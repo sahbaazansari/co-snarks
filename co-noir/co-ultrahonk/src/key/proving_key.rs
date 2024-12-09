@@ -58,7 +58,7 @@ impl<T: NoirUltraHonkProver<P>, P: Pairing> ProvingKey<T, P> {
         crs: ProverCrs<P>,
         driver: &mut U,
     ) -> HonkProofResult<Self> {
-        tracing::trace!("ProvingKey create");
+        tracing::debug!("ProvingKey create");
         circuit.finalize_circuit(true, driver)?;
 
         let dyadic_circuit_size = circuit.compute_dyadic_size();
@@ -226,7 +226,7 @@ impl<T: NoirUltraHonkProver<P>, P: Pairing> ProvingKey<T, P> {
         crs: ProverCrs<P>,
         final_active_wire_idx: usize,
     ) -> Self {
-        tracing::trace!("ProvingKey new");
+        tracing::debug!("ProvingKey new");
         let polynomials = Polynomials::new(circuit_size);
 
         Self {
@@ -251,7 +251,7 @@ impl<T: NoirUltraHonkProver<P>, P: Pairing> ProvingKey<T, P> {
         builder: &mut GenericUltraCircuitBuilder<P, U>,
         is_structured: bool,
     ) {
-        tracing::trace!("Populating trace");
+        tracing::debug!("Populating trace");
 
         let mut trace_data = TraceData::new(builder, self);
         trace_data.construct_trace_data(id, builder, is_structured);

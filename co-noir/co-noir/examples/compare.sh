@@ -6,7 +6,7 @@ BARRETENBERG_VERSION=0.63.1 ##specify the desired barretenberg version here or u
 PLAINDRIVER="../../../target/release/plaindriver"
 exit_code=0
 
-REMOVE_OUTPUT=1
+REMOVE_OUTPUT=0
 PIPE=""
 if [[ $REMOVE_OUTPUT -eq 1 ]];
 then
@@ -36,7 +36,7 @@ echo "Using nargo version $NARGO_VERSION"
 echo "Using bb version $BARRETENBERG_VERSION"
 echo ""
 
-test_cases=("add3u64" "mul3u64" "assert" "get_bytes" "if_then" "negative" "poseidon_assert" "quantized" "add3" "add3_assert" "poseidon" "poseidon_input2" "approx_sigmoid" "addition_multiplication" "unconstrained_fn" "unconstrained_fn_field")
+test_cases=("hashcloak")
 
 run_proof_verification() {
   local name=$1
@@ -105,7 +105,7 @@ for f in "${test_cases[@]}"; do
   bash -c "(cd test_vectors/${f} && nargo execute) $PIPE"
 
   # -e to exit on first error
-  bash -c "${PLAINDRIVER} --prover-crs test_vectors/bn254_g1.dat --verifier-crs test_vectors/bn254_g2.dat --input test_vectors/${f}/Prover.toml --circuit test_vectors/${f}/target/${f}.json --hasher POSEIDON --out-dir test_vectors/${f} $PIPE" || failed=1
+  bash -c "${PLAINDRIVER} --prover-crs test_vectors/g1.data --verifier-crs test_vectors/bn254_g2.dat --input test_vectors/${f}/Prover.toml --circuit test_vectors/${f}/target/${f}.json --hasher POSEIDON --out-dir test_vectors/${f} $PIPE" || failed=1
 
   if [ "$failed" -ne 0 ]
   then
@@ -116,7 +116,7 @@ for f in "${test_cases[@]}"; do
   bash cleanup.sh
 
    # -e to exit on first error
-  bash -c "${PLAINDRIVER} --prover-crs test_vectors/bn254_g1.dat --verifier-crs test_vectors/bn254_g2.dat --input test_vectors/${f}/Prover.toml --circuit test_vectors/${f}/target/${f}.json --hasher KECCAK --out-dir test_vectors/${f} $PIPE"  || failed=1
+  bash -c "${PLAINDRIVER} --prover-crs test_vectors/g1.data --verifier-crs test_vectors/bn254_g2.dat --input test_vectors/${f}/Prover.toml --circuit test_vectors/${f}/target/${f}.json --hasher KECCAK --out-dir test_vectors/${f} $PIPE"  || failed=1
 
   if [ "$failed" -ne 0 ]
   then

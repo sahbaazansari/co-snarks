@@ -39,9 +39,9 @@ where
             BinaryIntOp::Mul => todo!(),
             BinaryIntOp::Div => {
                 if self.shared_ctx.as_ref().is_some() {
-                    tracing::debug!(
-                        "we are in shared context and and maybe need to prevent from div by zero"
-                    );
+                    // tracing::debug!(
+                    //     "we are in shared context and and maybe need to prevent from div by zero"
+                    // );
                     //rhs = self.driver.cmux(cond.clone(), rhs, T::public_one())?;
                     todo!("cmux with the correct int type")
                 }

@@ -45,9 +45,9 @@ where
             BinaryFieldOp::Mul => self.driver.mul(lhs, rhs),
             BinaryFieldOp::Div => {
                 if let Some(cond) = self.shared_ctx.as_ref() {
-                    tracing::debug!(
-                        "we are in shared context and and maybe need to prevent from div by zero"
-                    );
+                    // tracing::debug!(
+                    //     "we are in shared context and and maybe need to prevent from div by zero"
+                    // );
                     rhs = self.driver.cmux(cond.clone(), rhs, T::public_one())?;
                 }
                 self.driver.div(lhs, rhs)

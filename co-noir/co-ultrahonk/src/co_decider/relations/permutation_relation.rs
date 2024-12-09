@@ -147,7 +147,7 @@ impl<T: NoirUltraHonkProver<P>, P: HonkCurve<TranscriptFieldType>> Relation<T, P
         relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate UltraPermutationRelation");
+        tracing::debug!("Accumulate UltraPermutationRelation");
 
         let public_input_delta = &relation_parameters.public_input_delta;
         let z_perm = input.witness.z_perm();

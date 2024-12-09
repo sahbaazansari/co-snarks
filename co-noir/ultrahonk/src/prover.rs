@@ -21,7 +21,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     pub(crate) fn generate_gate_challenges(
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> Vec<P::ScalarField> {
-        tracing::trace!("generate gate challenges");
+        // tracing::trace!("generate gate challenges");
 
         let mut gate_challenges: Vec<<P as Pairing>::ScalarField> =
             Vec::with_capacity(CONST_PROOF_SIZE_LOG_N);
@@ -34,7 +34,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
     }
 
     pub fn prove(proving_key: ProvingKey<P>) -> HonkProofResult<HonkProof<TranscriptFieldType>> {
-        tracing::trace!("UltraHonk prove");
+        // tracing::trace!("UltraHonk prove");
 
         let mut transcript = Transcript::<TranscriptFieldType, H>::new();
 

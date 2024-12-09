@@ -32,7 +32,7 @@ impl<
         round_size: usize,
         round_challenge: &P::ScalarField,
     ) {
-        tracing::trace!("Partially_evaluate init");
+        tracing::debug!("Partially_evaluate init");
 
         // Barretenberg uses multithreading here
 
@@ -63,7 +63,7 @@ impl<
         round_size: usize,
         round_challenge: &P::ScalarField,
     ) {
-        tracing::trace!("Partially_evaluate inplace");
+        tracing::debug!("Partially_evaluate inplace");
 
         // Barretenberg uses multithreading here
 
@@ -86,7 +86,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         evaluations: &ClaimedEvaluations<P::ScalarField>,
     ) {
-        tracing::trace!("Add Evals to Transcript");
+        tracing::debug!("Add Evals to Transcript");
 
         transcript.send_fr_iter_to_verifier::<P, _>(
             "Sumcheck:evaluations".to_string(),
@@ -129,7 +129,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         circuit_size: u32,
     ) -> HonkProofResult<SumcheckOutput<P::ScalarField>> {
-        tracing::trace!("Sumcheck prove");
+        tracing::debug!("Sumcheck prove");
 
         let multivariate_n = circuit_size;
         let multivariate_d = Utils::get_msb64(multivariate_n as u64);
@@ -144,7 +144,7 @@ impl<
         let mut multivariate_challenge = Vec::with_capacity(multivariate_d as usize);
         let round_idx = 0;
 
-        tracing::trace!("Sumcheck prove round {}", round_idx);
+        tracing::debug!("Sumcheck prove round {}", round_idx);
 
         // In the first round, we compute the first univariate polynomial and populate the book-keeping table of
         // #partially_evaluated_polynomials, which has \f$ n/2 \f$ rows and \f$ N \f$ columns. When the Flavor has ZK,
@@ -182,7 +182,7 @@ impl<
                                           // We operate on partially_evaluated_polynomials in place.
 
         for round_idx in 1..multivariate_d as usize {
-            tracing::trace!("Sumcheck prove round {}", round_idx);
+            tracing::debug!("Sumcheck prove round {}", round_idx);
             // Write the round univariate to the transcript
 
             let round_univariate = sum_check_round.compute_univariate::<T, P>(

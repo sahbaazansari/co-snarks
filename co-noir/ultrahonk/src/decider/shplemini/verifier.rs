@@ -91,7 +91,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         shplonk_eval_challenge: &P::ScalarField,
         gemini_eval_challenge_powers: &[P::ScalarField],
     ) -> Vec<P::ScalarField> {
-        tracing::trace!("Compute inverted gemini denominators");
+        // tracing::trace!("Compute inverted gemini denominators");
         let mut inverted_denominators = Vec::with_capacity(num_gemini_claims);
         inverted_denominators.push(
             (*shplonk_eval_challenge - gemini_eval_challenge_powers[0])
@@ -118,7 +118,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         // const std::vector<RefVector<Commitment>>& concatenation_group_commitments = {},
         // RefSpan<P::ScalarField> concatenated_evaluations = {}
     ) -> HonkVerifyResult<ShpleminiVerifierOpeningClaim<P>> {
-        tracing::trace!("Compute batch opening claim");
+        // tracing::trace!("Compute batch opening claim");
         // Extract log_circuit_size
         let log_circuit_size = Utils::get_msb32(circuit_size);
 
@@ -278,7 +278,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         challenge_powers: Vec<P::ScalarField>,
         fold_polynomial_evals: &[P::ScalarField],
     ) -> P::ScalarField {
-        tracing::trace!("Compute gemini batched univariate evaluation");
+        // tracing::trace!("Compute gemini batched univariate evaluation");
         let evals = fold_polynomial_evals;
 
         // Solve the sequence of linear equations
@@ -366,7 +366,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         // concatenation_group_commitments: &[Vec<P::G1Affine>],
         // concatenated_evaluations: &[P::ScalarField],
     ) {
-        tracing::trace!("Batch multivariate opening claims");
+        // tracing::trace!("Batch multivariate opening claims");
         let mut current_batching_challenge = P::ScalarField::one();
         let unshifted_evaluations = Self::get_f_evaluations(&self.memory.claimed_evaluations);
         let shifted_evaluations = Self::get_g_shift_evaluations(&self.memory.claimed_evaluations);
@@ -470,7 +470,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         opening_claim: &mut ShpleminiVerifierOpeningClaim<P>,
         constant_term_accumulator: &mut P::ScalarField,
     ) {
-        tracing::trace!("Receive batch gemini claims");
+        // tracing::trace!("Receive batch gemini claims");
         // Initialize batching challenge as ν²
         let mut current_batching_challenge = shplonk_batching_challenge.square();
         for j in 0..CONST_PROOF_SIZE_LOG_N - 1 {

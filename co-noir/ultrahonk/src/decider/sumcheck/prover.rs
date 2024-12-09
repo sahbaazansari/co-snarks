@@ -15,7 +15,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         round_size: usize,
         round_challenge: &P::ScalarField,
     ) {
-        tracing::trace!("Partially_evaluate init");
+        // tracing::trace!("Partially_evaluate init");
 
         // Barretenberg uses multithreading here
         for (poly_src, poly_des) in polys.iter().zip(partially_evaluated_poly.iter_mut()) {
@@ -30,7 +30,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         round_size: usize,
         round_challenge: &P::ScalarField,
     ) {
-        tracing::trace!("Partially_evaluate inplace");
+        // tracing::trace!("Partially_evaluate inplace");
 
         // Barretenberg uses multithreading here
         for poly in partially_evaluated_poly.iter_mut() {
@@ -44,7 +44,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         evaluations: &ClaimedEvaluations<P::ScalarField>,
     ) {
-        tracing::trace!("Add Evals to Transcript");
+        // tracing::trace!("Add Evals to Transcript");
 
         transcript.send_fr_iter_to_verifier::<P, _>(
             "Sumcheck:evaluations".to_string(),
@@ -72,7 +72,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         transcript: &mut Transcript<TranscriptFieldType, H>,
         circuit_size: u32,
     ) -> SumcheckOutput<P::ScalarField> {
-        tracing::trace!("Sumcheck prove");
+        // tracing::trace!("Sumcheck prove");
 
         let multivariate_n = circuit_size;
         let multivariate_d = Utils::get_msb64(multivariate_n as u64);
@@ -87,7 +87,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         let mut multivariate_challenge = Vec::with_capacity(multivariate_d as usize);
         let round_idx = 0;
 
-        tracing::trace!("Sumcheck prove round {}", round_idx);
+        // tracing::trace!("Sumcheck prove round {}", round_idx);
 
         // In the first round, we compute the first univariate polynomial and populate the book-keeping table of
         // #partially_evaluated_polynomials, which has \f$ n/2 \f$ rows and \f$ N \f$ columns. When the Flavor has ZK,
@@ -122,7 +122,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
                                           // We operate on partially_evaluated_polynomials in place.
 
         for round_idx in 1..multivariate_d as usize {
-            tracing::trace!("Sumcheck prove round {}", round_idx);
+            // tracing::trace!("Sumcheck prove round {}", round_idx);
             // Write the round univariate to the transcript
 
             let round_univariate = sum_check_round.compute_univariate::<P>(

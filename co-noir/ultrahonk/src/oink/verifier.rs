@@ -41,7 +41,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         verifying_key: &VerifyingKey<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<()> {
-        tracing::trace!("executing (verifying) preamble round");
+        // tracing::trace!("executing (verifying) preamble round");
 
         let circuit_size = transcript
             .receive_u64_from_prover("circuit_size".to_string())
@@ -80,7 +80,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         &mut self,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<()> {
-        tracing::trace!("executing (verifying) wire commitments round");
+        // tracing::trace!("executing (verifying) wire commitments round");
 
         *self.memory.witness_commitments.w_l_mut() =
             transcript.receive_point_from_prover::<P>("W_L".to_string())?;
@@ -97,7 +97,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         &mut self,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<()> {
-        tracing::trace!("executing (verifying) sorted list accumulator round");
+        // tracing::trace!("executing (verifying) sorted list accumulator round");
 
         let challs = transcript.get_challenges::<P>(&[
             "eta".to_string(),
@@ -124,7 +124,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         &mut self,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<()> {
-        tracing::trace!("executing (verifying) log derivative inverse round");
+        // tracing::trace!("executing (verifying) log derivative inverse round");
 
         let challs = transcript.get_challenges::<P>(&["beta".to_string(), "gamma".to_string()]);
         self.memory.challenges.beta = challs[0];
@@ -142,7 +142,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         verifying_key: &VerifyingKey<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<()> {
-        tracing::trace!("executing (verifying) grand product computation round");
+        // tracing::trace!("executing (verifying) grand product computation round");
         self.memory.public_input_delta = Oink::<P, H>::compute_public_input_delta(
             &self.memory.challenges.beta,
             &self.memory.challenges.gamma,
@@ -160,7 +160,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         verifying_key: &VerifyingKey<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<VerifierMemory<P>> {
-        tracing::trace!("Oink verify");
+        // tracing::trace!("Oink verify");
         self.execute_preamble_round(verifying_key, transcript)?;
         self.execute_wire_commitments_round(transcript)?;
         self.execute_sorted_list_accumulator_round(transcript)?;

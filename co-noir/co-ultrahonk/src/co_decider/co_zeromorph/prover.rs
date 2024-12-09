@@ -445,7 +445,7 @@ impl<
         crs: &ProverCrs<P>,
         sumcheck_output: SumcheckOutput<P::ScalarField>,
     ) -> HonkProofResult<ZeroMorphOpeningClaim<T, P>> {
-        tracing::trace!("Zeromorph prove");
+        tracing::debug!("Zeromorph prove");
 
         let multilinear_challenge = &sumcheck_output.challenges;
         let commitment_key = crs;

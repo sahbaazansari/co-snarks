@@ -200,7 +200,7 @@ impl<T: NoirUltraHonkProver<P>, P: HonkCurve<TranscriptFieldType>> Relation<T, P
         relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate LogDerivLookupRelation");
+        tracing::debug!("Accumulate LogDerivLookupRelation");
 
         let inverses = input.witness.lookup_inverses(); // Degree 1
         let read_counts = input.witness.lookup_read_counts(); // Degree 1

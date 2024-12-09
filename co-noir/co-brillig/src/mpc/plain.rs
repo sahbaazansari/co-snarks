@@ -396,9 +396,9 @@ impl<F: PrimeField> BrilligDriver<F> for PlainBrilligDriver<F> {
                 };
                 input /= &radix;
             }
-            for limb in limbs.iter() {
-                tracing::debug!("{limb:?}");
-            }
+            // for limb in limbs.iter() {
+            // tracing::debug!("{limb:?}");
+            // }
             Ok(limbs)
         } else {
             eyre::bail!("can only ToRadix on field and radix must be Int32")

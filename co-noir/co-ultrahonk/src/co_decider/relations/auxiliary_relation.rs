@@ -175,7 +175,7 @@ impl<T: NoirUltraHonkProver<P>, P: HonkCurve<TranscriptFieldType>> Relation<T, P
         relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate AuxiliaryRelation");
+        tracing::debug!("Accumulate AuxiliaryRelation");
 
         let eta = &relation_parameters.eta_1;
         let eta_two = &relation_parameters.eta_2;

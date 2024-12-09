@@ -84,7 +84,7 @@ impl EllipticRelation {
         _relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) {
-        tracing::trace!("Accumulate EllipticRelation");
+        // tracing::trace!("Accumulate EllipticRelation");
 
         // AZTEC TODO(@zac - williamson #2608 when Pedersen refactor is completed,
         // replace old addition relations with these ones and
@@ -168,7 +168,7 @@ impl EllipticRelation {
     ) where
         P::ScalarField: PrimeField,
     {
-        tracing::trace!("Accumulate EllipticRelation");
+        // tracing::trace!("Accumulate EllipticRelation");
 
         // AZTEC TODO(@zac - williamson #2608 when Pedersen refactor is completed,
         // replace old addition relations with these ones and

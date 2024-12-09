@@ -68,7 +68,7 @@ where
             let predicate = self.evaluate_expression(expr)?;
             // we skip if predicate is zero
             if T::is_public_zero(&predicate) {
-                tracing::debug!("skipping brillig call as predicate is zero");
+                // tracing::debug!("skipping brillig call as predicate is zero");
                 // short circuit and fill with zeros
                 let zeroes_result = vec![T::public_zero(); get_output_size(outputs)];
                 self.fill_output(zeroes_result, outputs);
@@ -80,7 +80,7 @@ where
         } else {
             BrilligMask::NoMask
         };
-        tracing::debug!("solving brillig call: {}", id);
+        // tracing::debug!("solving brillig call: {}", id);
         let mut calldata = vec![];
         for input in inputs {
             match input {

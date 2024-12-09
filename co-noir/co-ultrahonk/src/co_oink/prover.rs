@@ -60,7 +60,7 @@ impl<
     }
 
     fn compute_w4(&mut self, proving_key: &ProvingKey<T, P>) {
-        tracing::trace!("compute w4");
+        tracing::debug!("compute w4");
         // The memory record values are computed at the indicated indices as
         // w4 = w3 * eta^3 + w2 * eta^2 + w1 * eta + read_write_flag;
 
@@ -131,7 +131,7 @@ impl<
         proving_key: &ProvingKey<T, P>,
         i: usize,
     ) -> T::ArithmeticShare {
-        tracing::trace!("compute read term");
+        tracing::debug!("compute read term");
 
         let gamma = self.memory.challenges.gamma;
         let eta_1 = self.memory.challenges.eta_1;
@@ -180,7 +180,7 @@ impl<
 
     // Compute table_1 + gamma + table_2 * eta + table_3 * eta_2 + table_4 * eta_3
     fn compute_write_term(&self, proving_key: &ProvingKey<T, P>, i: usize) -> P::ScalarField {
-        tracing::trace!("compute write term");
+        tracing::debug!("compute write term");
 
         let gamma = &self.memory.challenges.gamma;
         let eta_1 = &self.memory.challenges.eta_1;
@@ -198,7 +198,7 @@ impl<
         &mut self,
         proving_key: &ProvingKey<T, P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("compute logderivative inverse");
+        tracing::debug!("compute logderivative inverse");
 
         debug_assert_eq!(
             proving_key.polynomials.precomputed.q_lookup().len(),
@@ -243,7 +243,7 @@ impl<
     }
 
     fn compute_public_input_delta(&self, proving_key: &ProvingKey<T, P>) -> P::ScalarField {
-        tracing::trace!("compute public input delta");
+        tracing::debug!("compute public input delta");
 
         // Let m be the number of public inputs x₀,…, xₘ₋₁.
         // Recall that we broke the permutation σ⁰ by changing the mapping
@@ -350,7 +350,7 @@ impl<
     }
 
     fn compute_grand_product(&mut self, proving_key: &ProvingKey<T, P>) -> HonkProofResult<()> {
-        tracing::trace!("compute grand product");
+        tracing::debug!("compute grand product");
         // Barratenberg uses multithreading here
 
         // Set the domain over which the grand product must be computed. This may be less than the dyadic circuit size, e.g
@@ -432,7 +432,7 @@ impl<
 
     // Generate relation separators alphas for sumcheck/combiner computation
     fn generate_alphas_round(&mut self, transcript: &mut Transcript<TranscriptFieldType, H>) {
-        tracing::trace!("generate alpha round");
+        tracing::debug!("generate alpha round");
 
         let args: [String; NUM_ALPHAS] = array::from_fn(|i| format!("alpha_{}", i));
         self.memory
@@ -446,7 +446,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<T, P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing preamble round");
+        tracing::debug!("executing preamble round");
 
         transcript
             .send_u64_to_verifier("circuit_size".to_string(), proving_key.circuit_size as u64);
@@ -478,7 +478,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<T, P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing wire commitments round");
+        tracing::debug!("executing wire commitments round");
 
         // Commit to the first three wire polynomials of the instance
         // We only commit to the fourth wire polynomial after adding memory records
@@ -512,7 +512,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<T, P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing sorted list accumulator round");
+        tracing::debug!("executing sorted list accumulator round");
 
         let challs = transcript.get_challenges::<P>(&[
             "eta".to_string(),
@@ -557,7 +557,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<T, P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing log derivative inverse round");
+        tracing::debug!("executing log derivative inverse round");
 
         let challs = transcript.get_challenges::<P>(&["beta".to_string(), "gamma".to_string()]);
         self.memory.challenges.beta = challs[0];
@@ -577,7 +577,7 @@ impl<
         transcript: &mut Transcript<TranscriptFieldType, H>,
         proving_key: &ProvingKey<T, P>,
     ) -> HonkProofResult<()> {
-        tracing::trace!("executing grand product computation round");
+        tracing::debug!("executing grand product computation round");
 
         self.memory.public_input_delta = self.compute_public_input_delta(proving_key);
         self.compute_grand_product(proving_key)?;
@@ -600,7 +600,7 @@ impl<
         proving_key: &ProvingKey<T, P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<ProverMemory<T, P>> {
-        tracing::trace!("Oink prove");
+        tracing::debug!("Oink prove");
 
         // Add circuit size public input size and public inputs to transcript
         Self::execute_preamble_round(transcript, proving_key)?;

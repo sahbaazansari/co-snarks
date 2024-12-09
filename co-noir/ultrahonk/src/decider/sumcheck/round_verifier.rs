@@ -43,12 +43,12 @@ impl<P: HonkCurve<TranscriptFieldType>> SumcheckVerifierRound<P> {
         univariate: &SumcheckRoundOutput<P::ScalarField>,
         round_challenge: P::ScalarField,
     ) {
-        tracing::trace!("Compute target sum");
+        // tracing::trace!("Compute target sum");
         self.target_total_sum = univariate.evaluate(round_challenge);
     }
 
     pub(crate) fn check_sum(&mut self, univariate: &SumcheckRoundOutput<P::ScalarField>) -> bool {
-        tracing::trace!("Check sum");
+        // tracing::trace!("Check sum");
         let total_sum = univariate.evaluations[0] + univariate.evaluations[1];
         let sumcheck_round_failed = self.target_total_sum != total_sum;
 
@@ -90,7 +90,7 @@ impl<P: HonkCurve<TranscriptFieldType>> SumcheckVerifierRound<P> {
         relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) {
-        tracing::trace!("Accumulate relations");
+        // tracing::trace!("Accumulate relations");
 
         Self::accumulate_one_relation_evaluations::<UltraArithmeticRelation>(
             &mut univariate_accumulators.r_arith,
@@ -147,7 +147,7 @@ impl<P: HonkCurve<TranscriptFieldType>> SumcheckVerifierRound<P> {
         relation_parameters: &RelationParameters<P::ScalarField>,
         gate_sparators: GateSeparatorPolynomial<P::ScalarField>,
     ) -> P::ScalarField {
-        tracing::trace!("Compute full relation purported value");
+        // tracing::trace!("Compute full relation purported value");
 
         let mut relation_evaluations = AllRelationEvaluations::<P::ScalarField>::default();
 

@@ -91,7 +91,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         commitment_key: &ProverCrs<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<Vec<ShpleminiOpeningClaim<P::ScalarField>>> {
-        tracing::trace!("Gemini prove");
+        // tracing::trace!("Gemini prove");
         let n = 1 << log_n;
 
         // Compute batched polynomials
@@ -139,7 +139,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         batched_unshifted: Polynomial<P::ScalarField>,
         batched_to_be_shifted: Polynomial<P::ScalarField>,
     ) -> Vec<Polynomial<P::ScalarField>> {
-        tracing::trace!("Compute fold polynomials");
+        // tracing::trace!("Compute fold polynomials");
         // Note: bb uses multithreading here
         let mut fold_polynomials: Vec<Polynomial<P::ScalarField>> =
             Vec::with_capacity(num_variables + 1);
@@ -203,7 +203,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         mut fold_polynomials: Vec<Polynomial<P::ScalarField>>,
         r_challenge: P::ScalarField,
     ) -> HonkProofResult<Vec<ShpleminiOpeningClaim<P::ScalarField>>> {
-        tracing::trace!("Compute fold polynomial evaluations");
+        // tracing::trace!("Compute fold polynomial evaluations");
 
         let num_variables = fold_polynomials.len() - 1;
         let batched_f = &mut fold_polynomials.remove(0); // F(X) = ∑ⱼ ρʲ fⱼ(X)
@@ -278,7 +278,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         commitment_key: &ProverCrs<P>,
         transcript: &mut Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<ShpleminiOpeningClaim<P::ScalarField>> {
-        tracing::trace!("Shplonk prove");
+        // tracing::trace!("Shplonk prove");
         let nu = transcript.get_challenge::<P>("Shplonk:nu".to_string());
         let batched_quotient = Self::compute_batched_quotient(&opening_claims, nu);
         let batched_quotient_commitment =
@@ -305,7 +305,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         crs: &ProverCrs<P>,
         sumcheck_output: SumcheckOutput<P::ScalarField>,
     ) -> HonkProofResult<ShpleminiOpeningClaim<P::ScalarField>> {
-        tracing::trace!("Shplemini prove");
+        // tracing::trace!("Shplemini prove");
         let log_circuit_size = Utils::get_msb32(circuit_size);
         let opening_claims = self.gemini_prove(
             sumcheck_output.challenges,
@@ -332,7 +332,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         nu_challenge: P::ScalarField,
         z_challenge: P::ScalarField,
     ) -> ShpleminiOpeningClaim<P::ScalarField> {
-        tracing::trace!("Compute partially evaluated batched quotient");
+        // tracing::trace!("Compute partially evaluated batched quotient");
         let num_opening_claims = opening_claims.len();
 
         let mut inverse_vanishing_evals: Vec<P::ScalarField> =
@@ -377,7 +377,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         opening_claims: &Vec<ShpleminiOpeningClaim<P::ScalarField>>,
         nu_challenge: P::ScalarField,
     ) -> Polynomial<P::ScalarField> {
-        tracing::trace!("Compute batched quotient");
+        // tracing::trace!("Compute batched quotient");
         // Find n, the maximum size of all polynomials fⱼ(X)
         let mut max_poly_size: usize = 0;
         for claim in opening_claims {

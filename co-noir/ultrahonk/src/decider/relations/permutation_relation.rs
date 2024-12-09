@@ -192,7 +192,7 @@ impl<F: PrimeField> Relation<F> for UltraPermutationRelation {
         relation_parameters: &RelationParameters<F>,
         scaling_factor: &F,
     ) {
-        tracing::trace!("Accumulate UltraPermutationRelation");
+        // tracing::trace!("Accumulate UltraPermutationRelation");
 
         let public_input_delta = &relation_parameters.public_input_delta;
         let z_perm = input.witness.z_perm();
@@ -228,7 +228,7 @@ impl<F: PrimeField> Relation<F> for UltraPermutationRelation {
         relation_parameters: &RelationParameters<F>,
         scaling_factor: &F,
     ) {
-        tracing::trace!("Accumulate UltraPermutationRelation");
+        // tracing::trace!("Accumulate UltraPermutationRelation");
 
         let public_input_delta = &relation_parameters.public_input_delta;
         let z_perm = input.witness.z_perm();

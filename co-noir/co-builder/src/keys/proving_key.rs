@@ -33,7 +33,7 @@ impl<P: Pairing> ProvingKey<P> {
         crs: ProverCrs<P>,
         driver: &mut PlainAcvmSolver<P::ScalarField>,
     ) -> HonkProofResult<Self> {
-        tracing::trace!("ProvingKey create");
+        tracing::debug!("ProvingKey create");
         circuit.finalize_circuit(true, driver)?;
 
         let dyadic_circuit_size = circuit.compute_dyadic_size();
@@ -120,7 +120,7 @@ impl<P: Pairing> ProvingKey<P> {
         circuit: &GenericUltraCircuitBuilder<P, T>,
         path_g1: &str,
     ) -> Result<ProverCrs<P>> {
-        tracing::trace!("Getting prover crs");
+        tracing::debug!("Getting prover crs");
 
         let srs_size = Self::get_crs_size(circuit);
         CrsParser::<P>::get_crs_g1(path_g1, srs_size)
@@ -131,7 +131,7 @@ impl<P: Pairing> ProvingKey<P> {
         path_g1: &str,
         path_g2: &str,
     ) -> Result<Crs<P>> {
-        tracing::trace!("Getting crs");
+        tracing::debug!("Getting crs");
 
         let srs_size = Self::get_crs_size(circuit);
         CrsParser::<P>::get_crs(path_g1, path_g2, srs_size)
@@ -143,7 +143,7 @@ impl<P: Pairing> ProvingKey<P> {
         crs: ProverCrs<P>,
         final_active_wire_idx: usize,
     ) -> Self {
-        tracing::trace!("ProvingKey new");
+        tracing::debug!("ProvingKey new");
         let polynomials = Polynomials::new(circuit_size);
 
         Self {
@@ -160,7 +160,7 @@ impl<P: Pairing> ProvingKey<P> {
     }
 
     fn populate_trace(&mut self, builder: &mut UltraCircuitBuilder<P>, is_strucutred: bool) {
-        tracing::trace!("Populating trace");
+        tracing::debug!("Populating trace");
 
         let mut trace_data = TraceData::new(builder, self);
         trace_data.construct_trace_data(builder, is_strucutred);
@@ -192,7 +192,7 @@ impl<P: Pairing> ProvingKey<P> {
         memory_read_records: &mut Vec<u32>,
         memory_write_records: &mut Vec<u32>,
     ) {
-        tracing::trace!("Adding memory records to proving key");
+        tracing::debug!("Adding memory records to proving key");
 
         assert!(memory_read_records.is_empty());
         assert!(memory_write_records.is_empty());
@@ -215,7 +215,7 @@ impl<P: Pairing> ProvingKey<P> {
         circuit_size: usize,
         pub_inputs_offset: usize,
     ) {
-        tracing::trace!("Computing permutation argument polynomials");
+        tracing::debug!("Computing permutation argument polynomials");
         let mapping = Self::compute_permutation_mapping(
             circuit_size,
             pub_inputs_offset,

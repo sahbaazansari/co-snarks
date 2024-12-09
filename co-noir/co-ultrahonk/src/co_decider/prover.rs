@@ -94,7 +94,7 @@ impl<
         crs: &ProverCrs<P>,
         mut transcript: Transcript<TranscriptFieldType, H>,
     ) -> HonkProofResult<HonkProof<TranscriptFieldType>> {
-        tracing::trace!("Decider prove");
+        tracing::debug!("Decider prove");
 
         // Run sumcheck subprotocol.
         let sumcheck_output = self.execute_relation_check_rounds(&mut transcript, circuit_size)?;

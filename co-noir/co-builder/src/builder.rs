@@ -196,7 +196,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
         collect_gates_per_opcode: bool, // false for ultrahonk
         driver: &mut T,
     ) -> std::io::Result<Self> {
-        tracing::trace!("Builder create circuit");
+        tracing::debug!("Builder create circuit");
 
         let has_valid_witness_assignments = !witness.is_empty();
 
@@ -220,7 +220,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
     }
 
     fn new(size_hint: usize) -> Self {
-        tracing::trace!("Builder new");
+        tracing::debug!("Builder new");
         let variables = Vec::with_capacity(size_hint * 3);
         // let _variable_names = BTreeMap::with_capacity(size_hint * 3);
         let next_var_index = Vec::with_capacity(size_hint * 3);
@@ -279,7 +279,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
         varnum: usize,
         recursive: bool,
     ) -> Self {
-        tracing::trace!("Builder init");
+        tracing::debug!("Builder init");
         let mut builder = Self::new(size_hint);
 
         // AZTEC TODO(https://github.com/AztecProtocol/barretenberg/issues/870): reserve space in blocks here somehow?
@@ -640,7 +640,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
         honk_recursion: bool,
         collect_gates_per_opcode: bool,
     ) -> std::io::Result<()> {
-        tracing::trace!("Builder build constraints");
+        tracing::debug!("Builder build constraints");
         if collect_gates_per_opcode {
             constraint_system
                 .gates_per_opcode
@@ -1968,6 +1968,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
         ensure_nonzero: bool,
         driver: &mut T,
     ) -> std::io::Result<()> {
+        tracing::debug!("Finalize circuit");
         // /**
         //  * First of all, add the gates related to ROM arrays and range lists.
         //  * Note that the total number of rows in an UltraPlonk program can be divided as following:
@@ -2005,6 +2006,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
             self.process_rom_arrays()?;
             self.process_ram_arrays();
             self.process_range_lists(driver)?;
+            tracing::debug!("Finalize circuit done");
             self.circuit_finalized = true;
         }
         Ok(())
@@ -2024,6 +2026,7 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
     }
 
     fn process_range_lists(&mut self, driver: &mut T) -> std::io::Result<()> {
+        tracing::debug!("Process range lists");
         // We copy due to mutability issues
         let mut lists = self
             .range_lists
@@ -2031,7 +2034,8 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
             .map(|(_, list)| list.clone())
             .collect::<Vec<_>>();
 
-        for list in lists.iter_mut() {
+        for (i, list) in lists.iter_mut().enumerate() {
+            tracing::debug!("Process range list {}", i);
             self.process_range_list(list, driver)?;
         }
         // We copy back (not strictly necessary, but should take no performance)
@@ -2183,11 +2187,13 @@ impl<P: Pairing, T: NoirWitnessExtensionProtocol<P::ScalarField>> GenericUltraCi
             sorted_list.push(field_element);
         }
 
+        tracing::debug!("Process range lists: before sort");
         let sorted_list = T::sort(
             driver,
             &sorted_list,
             Utils::get_msb64(list.target_range.next_power_of_two()) as usize,
         )?;
+        tracing::debug!("Process range lists: after sort");
 
         // list must be padded to a multipe of 4 and larger than 4 (gate_width)
         const GATE_WIDTH: usize = NUM_WIRES;

@@ -41,7 +41,7 @@ impl SumcheckProverRound {
         multivariates: &AllEntities<Vec<F>>,
         edge_index: usize,
     ) {
-        tracing::trace!("Extend edges");
+        // tracing::trace!("Extend edges");
 
         for (src, des) in multivariates.iter().zip(extended_edges.iter_mut()) {
             des.extend_from(&src[edge_index..edge_index + 2]);
@@ -99,7 +99,7 @@ impl SumcheckProverRound {
         alphas: &[F; crate::NUM_ALPHAS],
         gate_sparators: &GateSeparatorPolynomial<F>,
     ) -> SumcheckRoundOutput<F> {
-        tracing::trace!("batch over relations");
+        // tracing::trace!("batch over relations");
 
         let running_challenge = F::one();
         univariate_accumulators.scale(running_challenge, alphas);
@@ -151,7 +151,7 @@ impl SumcheckProverRound {
         relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) {
-        tracing::trace!("Accumulate relations");
+        // tracing::trace!("Accumulate relations");
 
         Self::accumulate_one_relation_univariates::<_, UltraArithmeticRelation>(
             &mut univariate_accumulators.r_arith,
@@ -205,12 +205,12 @@ impl SumcheckProverRound {
 
     pub(crate) fn compute_univariate<P: HonkCurve<TranscriptFieldType>>(
         &self,
-        round_index: usize,
+        _round_index: usize,
         relation_parameters: &RelationParameters<P::ScalarField>,
         gate_sparators: &GateSeparatorPolynomial<P::ScalarField>,
         polynomials: &AllEntities<Vec<P::ScalarField>>,
     ) -> SumcheckRoundOutput<P::ScalarField> {
-        tracing::trace!("Sumcheck round {}", round_index);
+        // tracing::trace!("Sumcheck round {}", round_index);
 
         // Barretenberg uses multithreading here
 

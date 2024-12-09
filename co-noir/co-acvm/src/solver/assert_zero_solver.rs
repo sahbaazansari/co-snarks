@@ -2,7 +2,7 @@ use crate::mpc::NoirWitnessExtensionProtocol;
 use acir::{acir_field::GenericFieldElement, native_types::Expression, AcirField};
 use ark_ff::PrimeField;
 
-use crate::solver::solver_utils;
+// use crate::solver::solver_utils;
 
 use super::{CoAcvmResult, CoSolver};
 
@@ -16,16 +16,16 @@ where
         expr: &Expression<GenericFieldElement<F>>,
         acc: &mut Expression<T::AcvmType>,
     ) -> CoAcvmResult<()> {
-        tracing::trace!("evaluating mul terms for simplification");
+        // // tracing::debug!("evaluating mul terms for simplification");
         if expr.mul_terms.is_empty() {
-            tracing::trace!("no mul term. we are done");
+            // // tracing::debug!("no mul term. we are done");
             Ok(())
         } else {
             for mul in expr.mul_terms.iter() {
                 let (c, lhs, rhs) = mul;
-                tracing::trace!("looking at mul term {c} * _{} * _{}", lhs.0, rhs.0);
+                // // tracing::debug!("looking at mul term {c} * _{} * _{}", lhs.0, rhs.0);
                 if c.is_zero() {
-                    tracing::trace!("c is zero. We can skip this mul term");
+                    // // tracing::debug!("c is zero. We can skip this mul term");
                 } else {
                     match (
                         self.witness().get(lhs).cloned(),
@@ -34,17 +34,17 @@ where
                         // we could batch this multiplication but our currently planed network design
                         // should solve this without batching
                         (Some(lhs), Some(rhs)) => {
-                            tracing::trace!("solving mul term...");
+                            // // tracing::debug!("solving mul term...");
                             let solved = self.driver.solve_mul_term(c.into_repr(), lhs, rhs)?;
                             self.driver.add_assign(&mut acc.q_c, solved);
                         }
                         (Some(lhs), None) => {
-                            tracing::trace!("partially solving mul term...");
+                            // // tracing::debug!("partially solving mul term...");
                             let partly_solved = self.driver.mul_with_public(c.into_repr(), lhs);
                             acc.linear_combinations.push((partly_solved, *rhs));
                         }
                         (None, Some(rhs)) => {
-                            tracing::trace!("partially solving mul term...");
+                            // // tracing::debug!("partially solving mul term...");
                             let partly_solved = self.driver.mul_with_public(c.into_repr(), rhs);
                             acc.linear_combinations.push((partly_solved, *lhs));
                         }
@@ -53,7 +53,7 @@ where
                             expr
                         ))?,
                     };
-                    tracing::trace!("after eval mul term: {acc:?}");
+                    // // tracing::debug!("after eval mul term: {acc:?}");
                 }
             }
             Ok(())
@@ -67,13 +67,13 @@ where
     ) {
         for term in expr.linear_combinations.iter() {
             let (q_l, w_l) = term;
-            tracing::trace!("looking at linear term: {q_l} * _{}..", w_l.0);
+            // tracing::debug!("looking at linear term: {q_l} * _{}..", w_l.0);
             if let Some(w_l) = self.witness().get(w_l).cloned() {
-                tracing::trace!("is known! reduce it");
+                // tracing::debug!("is known! reduce it");
                 self.driver
                     .solve_linear_term(q_l.into_repr(), w_l, &mut acc.q_c);
             } else {
-                tracing::trace!("is unknown!");
+                // tracing::debug!("is unknown!");
                 acc.linear_combinations
                     .push((T::AcvmType::from(q_l.into_repr()), *w_l))
             }
@@ -84,7 +84,7 @@ where
         &mut self,
         expr: &Expression<GenericFieldElement<F>>,
     ) -> CoAcvmResult<Expression<T::AcvmType>> {
-        tracing::trace!("simplifying expression...");
+        // tracing::debug!("simplifying expression...");
         // default implementation not exposed if we not have AcirField trait bound
         let mut simplified = Expression {
             mul_terms: vec![],
@@ -107,12 +107,12 @@ where
         expr: &Expression<GenericFieldElement<F>>,
     ) -> CoAcvmResult<()> {
         //first evaluate the already existing terms
-        tracing::trace!(
-            "solving assert zero: {}",
-            solver_utils::expr_to_string(expr)
-        );
+        // // tracing::debug!(
+        // "solving assert zero: {}",
+        // solver_utils::expr_to_string(expr)
+        // );
         let simplified = self.simplify_expression(expr)?;
-        tracing::trace!("simplified expr:     {:?}", simplified);
+        // // tracing::debug!("simplified expr:     {:?}", simplified);
         // if we are here, we do not have any mul terms
         debug_assert!(simplified.mul_terms.is_empty());
         debug_assert!(
@@ -123,15 +123,15 @@ where
         // cannot solve the expression
         if simplified.linear_combinations.is_empty() {
             // we are done
-            tracing::trace!("nothing to do for us");
+            // // tracing::debug!("nothing to do for us");
             Ok(())
         } else if simplified.linear_combinations.len() == 1 {
             //we can solve it!
-            tracing::trace!("solving equation...");
+            // // tracing::debug!("solving equation...");
             let (q_l, w_l) = simplified.linear_combinations[0].clone();
             let witness = self.driver.solve_equation(q_l, simplified.q_c)?;
             self.witness().insert(w_l, witness);
-            tracing::trace!("we did it!");
+            // // tracing::debug!("we did it!");
             Ok(())
         } else {
             Err(eyre::eyre!(

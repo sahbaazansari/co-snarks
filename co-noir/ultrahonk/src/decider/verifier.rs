@@ -42,7 +42,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         opening_pair: ZeroMorphVerifierOpeningClaim<P>,
         mut transcript: Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<(P::G1Affine, P::G1Affine)> {
-        tracing::trace!("Reduce and verify opening pair");
+        // tracing::trace!("Reduce and verify opening pair");
 
         let g1_affine = P::G1Affine::generator();
         let g1_projective: P::G1 = g1_affine.into_group();
@@ -62,7 +62,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         opening_pair: &mut ShpleminiVerifierOpeningClaim<P>,
         mut transcript: Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<(P::G1Affine, P::G1Affine)> {
-        tracing::trace!("Reduce and verify opening pair");
+        // tracing::trace!("Reduce and verify opening pair");
 
         let quotient_commitment = transcript.receive_point_from_prover::<P>("KZG:W".to_string())?;
         opening_pair.commitments.push(quotient_commitment);
@@ -79,7 +79,7 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         g2_x: P::G2Affine,
         g2_gen: P::G2Affine,
     ) -> bool {
-        tracing::trace!("Pairing check");
+        // tracing::trace!("Pairing check");
         let p = [g2_gen, g2_x];
         let g1_prepared = [P::G1Prepared::from(p0), P::G1Prepared::from(p1)];
         P::multi_pairing(g1_prepared, p).0 == P::TargetField::one()
@@ -91,11 +91,11 @@ impl<P: HonkCurve<TranscriptFieldType>, H: TranscriptHasher<TranscriptFieldType>
         crs: &P::G2Affine,
         mut transcript: Transcript<TranscriptFieldType, H>,
     ) -> HonkVerifyResult<bool> {
-        tracing::trace!("Decider verification");
+        // tracing::trace!("Decider verification");
 
         let sumcheck_output = self.sumcheck_verify(&mut transcript, circuit_size)?;
         if !sumcheck_output.verified {
-            tracing::trace!("Sumcheck failed");
+            // tracing::trace!("Sumcheck failed");
             return Ok(false);
         }
 

@@ -73,7 +73,7 @@ where
 
         loop {
             let opcode = &opcodes[self.ip];
-            tracing::debug!("running opcode: {:?}", opcode);
+            // // tracing::trace!("running opcode: {:?}", opcode);
             match opcode {
                 BrilligOpcode::BinaryFieldOp {
                     op,
@@ -264,7 +264,7 @@ where
                 if self.shared_ctx.is_some() {
                     eyre::bail!("we can only support one shared if atm");
                 }
-                tracing::debug!("encountered shared if - fork the universe!");
+                // tracing::debug!("encountered shared if - fork the universe!");
                 let (mut truthy, mut falsy) = self.fork_universe(condition.clone())?;
                 truthy.memory.write(address, T::public_true())?;
                 truthy.set_program_counter(location);
@@ -285,7 +285,7 @@ where
                         (truthy_result, falsy_result)
                     }
                     (CoBrilligResult::Success(truthy_result), CoBrilligResult::Failed) => {
-                        tracing::debug!("falsy universe failed. We set its result to ranodm noise");
+                        // tracing::debug!("falsy universe failed. We set its result to ranodm noise");
                         let falsy_result = truthy_result
                             .iter()
                             .map(|x| self.driver.random(x))
@@ -293,16 +293,16 @@ where
                         (truthy_result, falsy_result)
                     }
                     (CoBrilligResult::Failed, CoBrilligResult::Success(falsy_result)) => {
-                        tracing::debug!(
-                            "truthy universe failed. We set its result to ranodm noise"
-                        );
+                        // tracing::debug!(
+                        //     "truthy universe failed. We set its result to ranodm noise"
+                        // );
                         let truthy_result =
                             falsy_result.iter().map(|x| self.driver.random(x)).collect();
                         (truthy_result, falsy_result)
                     }
                     (CoBrilligResult::Failed, CoBrilligResult::Failed) => {
                         // both branches failed. This means we fail as well
-                        tracing::debug!("both universes failed. This means we failed");
+                        // tracing::debug!("both universes failed. This means we failed");
                         return Ok(Some(CoBrilligResult::Failed));
                     }
                 };

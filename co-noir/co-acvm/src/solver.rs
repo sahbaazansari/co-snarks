@@ -40,23 +40,23 @@ pub type ShamirCoSolver<F, N> = CoSolver<ShamirAcvmSolver<F, N>, F>;
 type CoAcvmResult<T> = std::result::Result<T, CoAcvmError>;
 
 pub(crate) mod solver_utils {
-    use acir::native_types::Expression;
+    // use acir::native_types::Expression;
 
-    pub(crate) fn expr_to_string<F: std::fmt::Display>(expr: &Expression<F>) -> String {
-        let mul_terms = expr
-            .mul_terms
-            .iter()
-            .map(|(q_m, w_l, w_r)| format!("({q_m} * _{w_l:?} * _{w_r:?})"))
-            .collect::<Vec<String>>()
-            .join(" + ");
-        let linear_terms = expr
-            .linear_combinations
-            .iter()
-            .map(|(coef, w)| format!("({coef} * _{w:?})"))
-            .collect::<Vec<String>>()
-            .join(" + ");
-        format!("EXPR [({mul_terms}) + ({linear_terms}) + {}]", expr.q_c)
-    }
+    // pub(crate) fn expr_to_string<F: std::fmt::Display>(expr: &Expression<F>) -> String {
+    //     let mul_terms = expr
+    //         .mul_terms
+    //         .iter()
+    //         .map(|(q_m, w_l, w_r)| format!("({q_m} * _{w_l:?} * _{w_r:?})"))
+    //         .collect::<Vec<String>>()
+    //         .join(" + ");
+    //     let linear_terms = expr
+    //         .linear_combinations
+    //         .iter()
+    //         .map(|(coef, w)| format!("({coef} * _{w:?})"))
+    //         .collect::<Vec<String>>()
+    //         .join(" + ");
+    //     format!("EXPR [({mul_terms}) + ({linear_terms}) + {}]", expr.q_c)
+    // }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -391,9 +391,9 @@ where
                 _ => todo!("opcode {} detected, not supported yet", opcode),
             }
         }
-        tracing::trace!("we are done! Opening results...");
+        // tracing::trace!("we are done! Opening results...");
         self.open_results(&functions[self.function_index])?;
-        tracing::trace!("Done! Wrap things up.");
+        // tracing::trace!("Done! Wrap things up.");
         let mut witness_stack = WitnessStack::default();
         for (idx, witness) in self.witness_map.into_iter().rev().enumerate() {
             witness_stack.push(u32::try_from(idx).expect("usize fits into u32"), witness);

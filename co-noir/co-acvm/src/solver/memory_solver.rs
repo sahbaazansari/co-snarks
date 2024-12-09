@@ -6,7 +6,7 @@ use acir::{
 };
 use ark_ff::PrimeField;
 
-use crate::solver::solver_utils;
+// use crate::solver::solver_utils;
 
 use super::{CoAcvmResult, CoSolver};
 
@@ -20,10 +20,10 @@ where
         block_id: BlockId,
         init: &[Witness],
     ) -> CoAcvmResult<()> {
-        tracing::trace!("solving memory init block {}", block_id.0);
+        // tracing::trace!("solving memory init block {}", block_id.0);
         if self.memory_access.get(block_id.0.into()).is_some() {
             //there is already a block? This should no be possible
-            tracing::error!("There is already a block for id {}", block_id.0);
+            // tracing::error!("There is already a block for id {}", block_id.0);
             Err(eyre::eyre!(
                 "There is already a block for id {}",
                 block_id.0
@@ -49,19 +49,19 @@ where
         op: &MemOp<GenericFieldElement<F>>,
         predicate: Option<Expression<GenericFieldElement<F>>>,
     ) -> CoAcvmResult<()> {
-        tracing::trace!("solving memory op {:?}", op);
+        // tracing::trace!("solving memory op {:?}", op);
         let index = self.evaluate_expression(&op.index)?;
-        tracing::trace!("index is {}", index);
+        // tracing::trace!("index is {}", index);
         let value = self.simplify_expression(&op.value)?;
-        tracing::trace!("value is {}", solver_utils::expr_to_string(&value));
+        // tracing::trace!("value is {}", solver_utils::expr_to_string(&value));
         let predicate = predicate.map(|expr| {
-            tracing::trace!("evaluating predicate!");
+            // tracing::trace!("evaluating predicate!");
             self.evaluate_expression(&expr)
         });
         let read_write = op.operation.q_c.into_repr();
         if read_write.is_zero() {
             // read the value from the LUT
-            tracing::trace!("reading value from LUT");
+            // tracing::trace!("reading value from LUT");
             // this is the to_witness method. We cannot call it on AcvmType because
             // of AcirField trait bound - maybe put it at some utils method
             // if we need it more than once
@@ -91,7 +91,7 @@ where
             if let Some(predicate) = predicate {
                 let predicate = predicate?;
                 if T::is_public_zero(&predicate) {
-                    tracing::trace!("predicate is false - we read zero!");
+                    // tracing::trace!("predicate is false - we read zero!");
                     self.witness().insert(witness, T::public_zero());
                 } else if T::is_public_one(&predicate) {
                     self.witness().insert(witness, value);
@@ -105,7 +105,7 @@ where
             }
         } else if read_write.is_one() {
             // write value to LUT
-            tracing::trace!("writing value to LUT");
+            // tracing::trace!("writing value to LUT");
             let lut = self
                 .memory_access
                 .get_mut(block_id.0.into())
@@ -116,7 +116,7 @@ where
             if let Some(predicate) = predicate {
                 let predicate = predicate?;
                 if T::is_public_zero(&predicate) {
-                    tracing::trace!("predicate is false - we skip!");
+                    // tracing::trace!("predicate is false - we skip!");
                 } else if T::is_public_one(&predicate) {
                     self.driver.write_lut_by_acvm_type(index, value.q_c, lut)?;
                 } else {

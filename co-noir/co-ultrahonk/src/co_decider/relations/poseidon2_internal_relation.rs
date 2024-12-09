@@ -126,7 +126,7 @@ impl<T: NoirUltraHonkProver<P>, P: HonkCurve<TranscriptFieldType>> Relation<T, P
         _relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate Poseidon2InternalRelation");
+        tracing::debug!("Accumulate Poseidon2InternalRelation");
 
         let w_l = input.witness.w_l();
         let w_r = input.witness.w_r();

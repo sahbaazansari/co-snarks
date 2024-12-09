@@ -123,7 +123,7 @@ impl<F: PrimeField> Relation<F> for Poseidon2InternalRelation {
         _relation_parameters: &RelationParameters<F>,
         scaling_factor: &F,
     ) {
-        tracing::trace!("Accumulate Poseidon2InternalRelation");
+        // tracing::trace!("Accumulate Poseidon2InternalRelation");
 
         let w_l = input.witness.w_l();
         let w_r = input.witness.w_r();
@@ -207,7 +207,7 @@ impl<F: PrimeField> Relation<F> for Poseidon2InternalRelation {
         _relation_parameters: &RelationParameters<F>,
         scaling_factor: &F,
     ) {
-        tracing::trace!("Accumulate Poseidon2InternalRelation");
+        // tracing::trace!("Accumulate Poseidon2InternalRelation");
 
         let w_l = input.witness.w_l();
         let w_r = input.witness.w_r();

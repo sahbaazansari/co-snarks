@@ -61,8 +61,10 @@ impl<'a, N: Rep3Network> Rep3Evaluator<'a, N> {
 
     /// Receive the garbled circuit from the garblers.
     pub fn receive_circuit(&mut self) -> IoResult<()> {
+        tracing::debug!("Receiving circuit");
         debug_assert!(self.circuit.is_empty());
         self.circuit = self.io_context.network.recv_many(PartyID::ID1)?;
+        tracing::debug!("Receiving circuit1 done");
         self.current_circuit_element = 0;
 
         let mut hasher = Sha3_256::default();
@@ -78,6 +80,7 @@ impl<'a, N: Rep3Network> Rep3Evaluator<'a, N> {
                 "Inconsistent Garbled Circuits: Hashes do not match!",
             ));
         }
+        tracing::debug!("Receiving circuit done");
 
         Ok(())
     }

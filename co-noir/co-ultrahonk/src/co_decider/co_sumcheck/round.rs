@@ -41,7 +41,7 @@ impl SumcheckRound {
         multivariates: &AllEntities<Vec<T::ArithmeticShare>, Vec<P::ScalarField>>,
         edge_index: usize,
     ) {
-        tracing::trace!("Extend edges");
+        tracing::debug!("Extend edges");
         for (src, des) in multivariates
             .public_iter()
             .zip(extended_edges.public_iter_mut())
@@ -110,7 +110,7 @@ impl SumcheckRound {
         alphas: &[P::ScalarField; crate::NUM_ALPHAS],
         gate_sparators: &GateSeparatorPolynomial<P::ScalarField>,
     ) -> SumcheckRoundOutput<T, P> {
-        tracing::trace!("batch over relations");
+        tracing::debug!("batch over relations");
 
         let running_challenge = P::ScalarField::one();
         univariate_accumulators.scale(driver, running_challenge, alphas);
@@ -159,7 +159,7 @@ impl SumcheckRound {
         relation_parameters: &RelationParameters<P::ScalarField>,
         scaling_factor: &P::ScalarField,
     ) -> HonkProofResult<()> {
-        tracing::trace!("Accumulate relations");
+        tracing::debug!("Accumulate relations");
         Self::accumulate_one_relation_univariates::<_, _, UltraArithmeticRelation>(
             driver,
             &mut univariate_accumulators.r_arith,
@@ -230,7 +230,7 @@ impl SumcheckRound {
         gate_sparators: &GateSeparatorPolynomial<P::ScalarField>,
         polynomials: &AllEntities<Vec<T::ArithmeticShare>, Vec<P::ScalarField>>,
     ) -> HonkProofResult<SumcheckRoundOutput<T, P>> {
-        tracing::trace!("Sumcheck round {}", round_index);
+        tracing::debug!("Sumcheck round {}", round_index);
 
         // Barretenberg uses multithreading here
 
